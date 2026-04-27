@@ -1,98 +1,66 @@
-let losElement = document.querySelector("#los");
-let losDateElement = losElement.querySelector(".date");
-let losTimeElement = losElement.querySelector(".time");
-
-let losInterval;
-let lodInterval;
+const citiesElement = document.querySelector("#cities");
+const citiesSelect = document.querySelector("#city");
 let selectedCityInterval;
 
-function updateLosTime() {
-  let losTime = moment.tz("America/Los_Angeles");
-  losDateElement.innerHTML = losTime.format("MMMM Do YYYY");
-  losTimeElement.innerHTML = `${losTime.format('h:mm:ss')}<small>${losTime.format("A")}</small>`;
+const timezoneLabels = {
+  "America/New_York": "New York, USA",
+  "Europe/London": "London, United Kingdom",
+  "Asia/Tokyo": "Tokyo, Japan",
+  "Africa/Kampala": "Kampala, Uganda",
+  "Australia/Sydney": "Sydney, Australia",
+  "Africa/Johannesburg": "Johannesburg, South Africa",
+  "America/Los_Angeles": "Los Angeles, USA",
+  "Asia/Dubai": "Dubai, UAE",
+  "Europe/Paris": "Paris, France",
+  "Asia/Hong_Kong": "Hong Kong, China",
+  "America/Sao_Paulo": "Sao Paulo, Brazil"
+};
+
+function getLocalTimeZone() {
+  return Intl.DateTimeFormat().resolvedOptions().timeZone || moment.tz.guess();
 }
 
-losInterval = setInterval(updateLosTime, 1000);
-updateLosTime();
-
-
-let lodElement = document.querySelector("#lod");
-let lodDateElement = lodElement.querySelector(".date");
-let lodTimeElement = lodElement.querySelector(".time");
-
-function updateLodTime() {
-  let lodTime = moment.tz("Europe/London");
-  lodDateElement.innerHTML = lodTime.format("MMMM Do YYYY");
-  lodTimeElement.innerHTML = `${lodTime.format('h:mm:ss')}<small>${lodTime.format("A")}</small>`;
+function renderCityCard(label, time) {
+  citiesElement.innerHTML = `
+    <div class="city">
+      <div>
+        <h2>${label}</h2>
+        <div class="date">${time.format("MMMM Do YYYY")}</div>
+      </div>
+      <div class="time">${time.format('h:mm:ss')}<small>${time.format("A")}</small></div>
+    </div>
+  `;
 }
 
-lodInterval = setInterval(updateLodTime, 1000);
-updateLodTime();
+function startCityClock(timeZone, label) {
+  clearInterval(selectedCityInterval);
 
+  function update() {
+    const currentTime = timeZone ? moment.tz(timeZone) : moment();
+    renderCityCard(label, currentTime);
+  }
 
+  update();
+  selectedCityInterval = setInterval(update, 1000);
+}
 
 function updateCity(event) {
-    let cityTimeZone = event.target.value;
-    let citiesElement = document.querySelector("#cities");
-    
-    if (cityTimeZone === "") {
-        // Show default cities
-        clearInterval(selectedCityInterval);
-        clearInterval(losInterval);
-        clearInterval(lodInterval);
-        losInterval = setInterval(updateLosTime, 1000);
-        lodInterval = setInterval(updateLodTime, 1000);
-        updateLosTime();
-        updateLodTime();
-        citiesElement.innerHTML = `
-         <div class="city" id="los">
-            <div>
-            <h2>Los Angels </h2>
-            <div class="date"></div>
-            </div>
-            <div class="time">
-            </div>
-         </div>
-         <div class="city" id="lod">
-            <div>
-            <h2>London</h2>
-            <div class="date"></div>
-            </div>
-            <div class="time">
-            </div>
-         </div>
-        `;
-        losElement = document.querySelector("#los");
-        losDateElement = losElement.querySelector(".date");
-        losTimeElement = losElement.querySelector(".time");
-        lodElement = document.querySelector("#lod");
-        lodDateElement = lodElement.querySelector(".date");
-        lodTimeElement = lodElement.querySelector(".time");
-    } else {
-        // Show selected city only
-        clearInterval(losInterval);
-        clearInterval(lodInterval);
-        clearInterval(selectedCityInterval);
-        let cityTime = moment.tz(cityTimeZone);
-        citiesElement.innerHTML = `
-    <div class="city">
-        <div>
-            <h2>${cityTimeZone}</h2>
-            <div class="date">${cityTime.format("MMMM Do YYYY")}</div>
-        </div>
-        <div class="time">${cityTime.format('h:mm:ss')}<small>${cityTime.format("A")}</small></div>
-    </div>
-    `;
-        // Update selected city every second
-        selectedCityInterval = setInterval(() => {
-            let updatedCityTime = moment.tz(cityTimeZone);
-            citiesElement.querySelector(".date").innerHTML = updatedCityTime.format("MMMM Do YYYY");
-            citiesElement.querySelector(".time").innerHTML = `${updatedCityTime.format('h:mm:ss')}<small>${updatedCityTime.format("A")}</small>`;
-        }, 1000);
-    }
+  const value = event.target.value;
+
+  if (!value) {
+    const localTZ = getLocalTimeZone();
+    const localLabel = timezoneLabels[localTZ] || "Your Local Time";
+    startCityClock(localTZ, localLabel);
+    return;
+  }
+
+  const label = timezoneLabels[value] || event.target.selectedOptions[0]?.textContent || value;
+  startCityClock(value, label);
 }
 
-let citiesSelect = document.querySelector("#city");
+const localTZ = getLocalTimeZone();
+const localLabel = timezoneLabels[localTZ] || "Your Local Time";
+startCityClock(localTZ, localLabel);
 
 citiesSelect.addEventListener("change", updateCity);
 
