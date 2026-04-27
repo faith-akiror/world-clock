@@ -17,6 +17,27 @@ body {
     margin: 20px 0;
     border-bottom: 1px dashed rgba(0, 0, 0, 0.4);
     padding: 30px 0;
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    background: linear-gradient(145deg, rgba(255, 243, 249, 0.9), rgba(250, 241, 255, 0.95));
+}
+.city::before {
+    content: '';
+    position: absolute;
+    top: -10%;
+    left: -10%;
+    right: -10%;
+    bottom: -10%;
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(255, 193, 193, 0.14) 0, transparent 35%),
+      radial-gradient(circle at 80% 25%, rgba(255, 240, 245, 0.12) 0, transparent 30%),
+      radial-gradient(circle at 50% 80%, rgba(237, 222, 255, 0.14) 0, transparent 40%);
+    z-index: 0;
+}
+.city > * {
+    position: relative;
+    z-index: 1;
 }
 .city:last-child {
     border-bottom: none;
@@ -87,12 +108,28 @@ footer {
 }
 
 .city-card {
-    background: #f8f9fa;
+    background: linear-gradient(135deg, rgba(255, 246, 250, 0.95), rgba(248, 245, 255, 0.95));
     border-radius: 8px;
     padding: 20px;
     border: 1px solid #e9ecef;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.city-card::before {
+    content: '';
+    position: absolute;
+    top: -10%;
+    left: -10%;
+    right: -10%;
+    bottom: -10%;
+    background-image:
+      radial-gradient(circle at 20% 15%, rgba(255, 207, 217, 0.14) 0, transparent 35%),
+      radial-gradient(circle at 80% 20%, rgba(244, 232, 255, 0.12) 0, transparent 32%),
+      radial-gradient(circle at 60% 75%, rgba(239, 246, 255, 0.14) 0, transparent 35%);
+    z-index: 0;
 }
 
 .city-card:hover {
@@ -107,6 +144,8 @@ footer {
     flex-direction: column;
     align-items: center;
     text-align: center;
+    position: relative;
+    z-index: 1;
 }
 
 .city-card .city h2 {

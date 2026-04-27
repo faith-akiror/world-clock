@@ -3,6 +3,8 @@ const citiesSelect = document.querySelector("#city");
 let selectedCityInterval;
 let allCitiesIntervals = [];
 
+// Floral background styling is handled entirely in CSS now.
+
 const timezoneLabels = {
   // North America - USA
   "America/New_York": "New York, USA",
@@ -221,7 +223,7 @@ function getLocalTimeZone() {
   return Intl.DateTimeFormat().resolvedOptions().timeZone || moment.tz.guess();
 }
 
-function renderCityCard(label, time) {
+function renderCityCard(label, time, timeZone) {
   citiesElement.innerHTML = `
     <div class="city">
       <div>
@@ -298,6 +300,14 @@ function showAllCities(event) {
   });
 }
 
+function resetToLocalTime(event) {
+  event.preventDefault();
+  citiesSelect.value = "";
+  const localTZ = getLocalTimeZone();
+  const localLabel = timezoneLabels[localTZ] || "Your Local Time";
+  startCityClock(localTZ, localLabel);
+}
+
 function startCityClock(timeZone, label) {
   clearInterval(selectedCityInterval);
   allCitiesIntervals.forEach(interval => clearInterval(interval));
@@ -305,7 +315,7 @@ function startCityClock(timeZone, label) {
 
   function update() {
     const currentTime = timeZone ? moment.tz(timeZone) : moment();
-    renderCityCard(label, currentTime);
+    renderCityCard(label, currentTime, timeZone);
   }
 
   update();
