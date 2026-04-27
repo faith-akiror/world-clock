@@ -29,6 +29,7 @@ function renderCityCard(label, time) {
       </div>
       <div class="time">${time.format('h:mm:ss')}<small>${time.format("A")}</small></div>
     </div>
+    <a href="/" class="back-link">All Cities</a>
   `;
 }
 
